@@ -215,7 +215,7 @@ class Lexer:
                         if comm is None:
                             raise LexerError("Comentário em bloco não fechado", comm_start_line, comm_start_column)
                         if ord(comm) > 127:
-                            raise LexerError(f"Caractere invalido {comm!r}", comm_start_line, comm_start_column)
+                            raise LexerError(f"Caractere invalido {comm!r}", self.getline(), self.getcolumn())
                         if comm == "*" and self._peek(1) == "/":
                             self._advance()
                             self._advance()
@@ -250,7 +250,7 @@ class Lexer:
         return Token(ktype, lexeme, value, start_line, start_col)
 
     def _int(self, start_line: int, start_col: int) -> Token:
-        """Consome Linguagem [0-9]+, ignora zeros a esquerda, gera um token para int ao final"""
+        """Consome Linguagem [0-9]+, preserva zeros no lexema e gera um token para int ao final"""
         buffer: list[str] = []
 
         while True:
@@ -333,7 +333,7 @@ class Lexer:
                     raise LexerError(f"Valor inválido para escape -> {esc_char!r}", slash_line, slash_col)
                 continue
             if ord(char) > 127:
-                raise LexerError(f"Caractere inválido -> {char!r}", start_line, start_col)
+                raise LexerError(f"Caractere inválido -> {char!r}", self.getline(), self.getcolumn())
 
             lexeme_buffer.append(self._advance())
             value_buffer.append(char)

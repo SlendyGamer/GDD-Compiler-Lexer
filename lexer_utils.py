@@ -4,7 +4,7 @@ def isnum(char):
 
 
 def isletter(char):
-    """Retorna True caso o caractere analisado seja uma letra [a-Z][A-Z], caso contrário, retorna False"""
+    """Retorna True caso o caractere analisado seja uma letra [a-z][A-Z], caso contrário, retorna False"""
     return ('a' <= char <= 'z') or ('A' <= char <= 'Z')
 
 
