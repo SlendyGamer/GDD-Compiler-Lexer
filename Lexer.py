@@ -1,8 +1,13 @@
 from __future__ import annotations
 import lexer_utils as lu
 import enum
+import sys
 from dataclasses import dataclass
 from typing import Iterator
+
+# desativa o limite de conversão decimal (deve ser tratado só na análise semântica)
+if hasattr(sys, "set_int_max_str_digits"):
+    sys.set_int_max_str_digits(0)
 
 
 class TokenKind(enum.Enum):
@@ -303,8 +308,8 @@ class Lexer:
             char = self._peek()
             if char is None:
                 raise LexerError("String não finalizada", start_line, start_col)
-            if char == "\n":
-                raise LexerError("Não é permitido quebra de linha dentro de Strings", self.getline(), self.getcolumn())
+            if char in ("\n", "\r"):
+                raise LexerError("Não é permitido quebra de linha ou retorno de carro dentro de Strings", self.getline(), self.getcolumn())
 
             if char == '"':
                 lexeme_buffer.append(self._advance())

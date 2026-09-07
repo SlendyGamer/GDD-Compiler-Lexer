@@ -96,6 +96,19 @@ def test_identificadores_inteiros_e_menos_sao_tokens_distintos():
     ]
 
 
+def test_inteiro_extremamente_longo_continua_sendo_literal():
+    lexeme = "9" * 5000
+
+    tokens = Lexer(lexeme).scan()
+    literal = tokens[0]
+
+    assert literal.kind is TokenKind.INT_LITERAL
+    assert literal.lexeme == lexeme
+    assert literal.value == 10**5000 - 1
+    assert str(literal) == f"<2, INT_LITERAL, {lexeme!r}, {lexeme}, 1, 1>"
+    assert tokens[1] == Token(TokenKind.EOF, "", None, 1, 5001)
+
+
 def test_operadores_usam_o_maior_casamento():
     tokens = Lexer("a<=b!=c&&true||!false;x=y+2*3/4%5>=0").scan()
     assert [token.kind.name for token in tokens] == [
@@ -150,6 +163,7 @@ def test_strings_adjacentes_continuam_separadas():
         ("|", 1, 1),
         ('"\\q"', 1, 2),
         ('"abc\n', 1, 5),
+        ('"abc\rdef"', 1, 5),
         ('"abc', 1, 1),
         ("/* sem fim", 1, 1),
         ("é", 1, 1),
